@@ -190,7 +190,12 @@ def data_to_Stft(Name):
 
 ```
 <br>
-![image(1)](https://github.com/user-attachments/assets/9b936988-21ef-41ee-b241-159ccd07945f)<br>
+
+
+![image](https://github.com/Ayn-C0rp/CNN-and-STFT-Stock-Prediction/blob/main/image(1).png)
+
+
+
 an example of a spectogram produced for training
 
 ## Model
