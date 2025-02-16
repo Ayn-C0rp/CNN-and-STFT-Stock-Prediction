@@ -3,7 +3,7 @@
 ## Introduction
 This is a short research idea I explored for a couple of weeks for a novel way of approaching the allure of stock prediction that attracts every machine learning novice. The idea this time is to perform a time-frequency analysis on the stock price data using an STFT (Short Time Fourier Transform) and then passing this processed data as an image to a Convolutional Neural Network to try and predict whether the model can predict whether the stock price will go up or down based on the processed data that it has been fed. The underlying assumption here is that using STFT's might reveal some underlying features about the changing stock prices that a Deep Learning model might not be able to capture on its own through normal training. Other wierd choices such as the data chosen for training are purely a result of financial and physical constraints. This short research endeavor hopes to uncover the practically of such novel methods (it's not really that good) and suggest some future prospects which I might personally attempt but really anybody is welcome to do so. 
 
-## Data and Processing
+## Datasets
 
 I used two different datasets to train the model and compared the performance of both of them. They are:<br>
 
@@ -155,4 +155,47 @@ if __name__ == '__main__':
     print('Done.')```
 
 ```
+### S&P-Data
+
+The S&P-Data Data set consists of 1-minute interval closing price of the S&P 500 index from 2008-2024 that I extracted from a bloomberg terminal by hand, copying and pasting on to an excel sheet while listening to a podcast. Because of the vastness of the dataset, I randomly chose 50,000 datapoints from the dataset to train the model.
+
+Each datapoint in the S&P-Data dataset comprises of the closing prices recorded over the predecing 381*5 minutes, i.e the last 5 working days. The Y-Value is the percentage change in the stock price after 381 minutes, i.e. one working day.
+
+![image](https://github.com/user-attachments/assets/1f44ffbc-9912-4ef0-ba20-ea44210c5a83)<br>
+Visual representation of S&P-Data datapoint
+<br>
+
+I really didn't need to do alot of processing for this dataset so not alot of code was needed to process this data.
+
+## Data Processing
+
+The X values from both datasets was converted to spectographs using the Short Time Fourier Transform (STFT) function provided by the scipy library. This was done as the STFT is effective in providing time localized frequency information for signals whose frequency components may vary over time. 
+<br>
+Originally the spectogram resolution was supposed to be 640x480 pixels. However, because of limited compute resources (kaggle's free tier) this resolution was halved to 320x240 pixels. The following code illustrates how made the spectograms:
+
+```
+def data_to_Stft(Name):
+    detrended = signal.detrend(X_Val[Name])
+    f, t, Sxx = signal.stft(detrended, fs=1, nperseg=512, nfft=1024)
+    plt.pcolormesh(t, f, abs(Sxx), shading='gouraud')
+    plt.ylim(0,0.01)
+    plt.axis('off')
+    plt.subplots_adjust(bottom=0)
+    plt.subplots_adjust(top=1)
+    plt.subplots_adjust(right=1)
+    plt.subplots_adjust(left=0)
+    plt.savefig(str(Name + 1) + '.png', bbox_inches='tight', pad_inches=0)
+    if Name % 100 == 0:
+        print(f"{Name}/{len(X_Val)}")```
+
+```
+<br>
+![image(1)](https://github.com/user-attachments/assets/9b936988-21ef-41ee-b241-159ccd07945f)<br>
+an example of a spectogram produced for training
+
+## Model
+
+
+
+
 
