@@ -4,7 +4,6 @@
 This is a short research idea I explored for a couple of weeks for a novel way of approaching the allure of stock prediction that attracts every machine learning novice. The idea this time is to perform a time-frequency analysis on the stock price data using an STFT (Short Time Fourier Transform) and then passing this processed data as an image to a Convolutional Neural Network to try and predict whether the model can predict whether the stock price will go up or down based on the processed data that it has been fed. The underlying assumption here is that using STFT's might reveal some underlying features about the changing stock prices that a Deep Learning model might not be able to capture on its own through normal training. Other wierd choices such as the data chosen for training are purely a result of financial and physical constraints. This short research endeavor hopes to uncover the practically of such novel methods (it's not really that good) and suggest some future prospects which I might personally attempt but really anybody is welcome to do so. 
 <br>
 <br>
-The models produced from this research are available to download on this github page. The code for producing one of the data sets used to train the models has been added to this readme page. 
 
 ## Datasets
 
