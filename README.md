@@ -2,6 +2,9 @@
 
 ## Introduction
 This is a short research idea I explored for a couple of weeks for a novel way of approaching the allure of stock prediction that attracts every machine learning novice. The idea this time is to perform a time-frequency analysis on the stock price data using an STFT (Short Time Fourier Transform) and then passing this processed data as an image to a Convolutional Neural Network to try and predict whether the model can predict whether the stock price will go up or down based on the processed data that it has been fed. The underlying assumption here is that using STFT's might reveal some underlying features about the changing stock prices that a Deep Learning model might not be able to capture on its own through normal training. Other wierd choices such as the data chosen for training are purely a result of financial and physical constraints. This short research endeavor hopes to uncover the practically of such novel methods (it's not really that good) and suggest some future prospects which I might personally attempt but really anybody is welcome to do so. 
+<br>
+<br>
+The models produced from this research are available to download on this github page. The code for producing one of the data sets used to train the models has been added to this readme page. 
 
 ## Datasets
 
@@ -200,7 +203,96 @@ an example of a spectogram produced for training
 
 ## Model
 
+The model architecture used was relatively simple, with just a few convolutional and max pooling layers, and a single dense layer at the end to tie everything together.
+The Tensor flow summary for the model is as follows:
+<br>
+
+```
+
+input1 = tf.keras.Input(shape=(320, 240, 3))
+x1 = layers.Conv2D(64, (3, 3), activation='relu')(input1)
+x1 = layers.MaxPooling2D((2, 2))(x1)
+x1 = layers.Conv2D(128, (3, 3), activation='relu')(x1)
+x1 = layers.MaxPooling2D((2, 2))(x1)
+x1 = layers.Conv2D(128, (3, 3), activation='relu')(x1)
+x1 = layers.Flatten()(x1)
+x1 = layers.Dense(64, activation='relu')(x1)
+output = layers.Dense(1)(x1)
+#output = layers.Dense(1, activation='linear')(x1)
 
 
+model = tf.keras.Model(inputs=input1, outputs=output)
+```
+<br>
+
+```
+_________________________________________________________________
+ Layer (type)                Output Shape              Param #   
+=================================================================
+ input_2 (InputLayer)        [(None, 320, 240, 3)]     0         
+                                                                 
+ conv2d_3 (Conv2D)           (None, 318, 238, 64)      1792      
+                                                                 
+ max_pooling2d_2 (MaxPoolin  (None, 159, 119, 64)      0         
+ g2D)                                                            
+                                                                 
+ conv2d_4 (Conv2D)           (None, 157, 117, 128)     73856     
+                                                                 
+ max_pooling2d_3 (MaxPoolin  (None, 78, 58, 128)       0         
+ g2D)                                                            
+                                                                 
+ conv2d_5 (Conv2D)           (None, 76, 56, 128)       147584    
+                                                                 
+ flatten_1 (Flatten)         (None, 544768)            0         
+                                                                 
+ dense_2 (Dense)             (None, 64)                34865216  
+                                                                 
+ dense_3 (Dense)             (None, 1)                 65        
+                                                                 
+=================================================================
+Total params: 35088513 (133.85 MB)
+Trainable params: 35088513 (133.85 MB)
+Non-trainable params: 0 (0.00 Byte)
+_________________________________________________________________
+```
+<br>
+
+## Performance
+
+Along with using Mean Absolute Error (MAE), I also used another performance metric called correct_sign_percentage that determined the accuracy of the model to be able to correctly predict whether the stock was increasing or decreasing. Both models were trained for 10 epochs with a batch size of 32 for both datasets. The results are as follows:<br>
 
 
+* Rand-Data<br>
+      - MAE (Validation set): 5.1644<br>
+      - Correct Sign Percentage (Validation set): 52.81%<br>
+
+* S&P-Data<br>
+      - MAE (Validation set): 0.79<br>
+      - Correct Sign Percentage (Validation set): 17.19%<br>
+
+<br>
+<br>
+While the S&P-Data model achieved a lower MAE, it was less effective and predicting the directionn of the price changes, as compared to the Rand-Data model.  
+
+## Results
+Although the results are a bit dissapointing in terms of prediction accuracy, it does bring into light some interesting insights into the nature of the data used for training. Notably while ths S&P data-set had a lower mean absolute error overall, it perfrormed significantly worse in predicting the direction of stock price changes compared to the Rand-Data dataset. This implies that the Rand-Data dataset possesses a higher predictive power for determining stock price trends as compared to the S&P-Data dataset.
+<br>
+It seems to appear as though it is much more effective to utilize data collected from multiple stocks over shorter, recent periods as compared to taking data from one stock over a larger time frame. Perhaps the data is much more relevant, potentially capturing more robust and generalized patterns within the market. 
+<br>
+These results also seem to imply that different stocks might share common features in their time-frequency analysis when obsereved over the same time period. This similarity could be harnessed to improve predictive models by focusing on broader spectrum of stocks within a similar timeframe rather than just focusing on a few stocks over a very large time frame.
+<br>
+The difference in the disparity in the MAE between the two datasets can al;so be attributed to the difference in data granularity. The Rand-Data dataset uses 2-minute interval closing prices, whereas the S&P-Data dataset uses 1-minute interval closing prices. Furthermore, The Rand-Data dataset is also predicting much further into the future (5 working days), as compared to the S&P-Data dataset which only predicts one day into the future.
+<br>
+
+## Limitations and (Possible) Future Work
+
+Several oversights and limitations were encountered during this research that impacted the results. One of the primary limitations was the resolution of the spectograms used for training. They had to be scaled down to half of their original resolution due to compute resource constraints. Future studies (if they happen) should try to use the spectograms at their full resolution, which could potentially enhance the feature extraction and make the model perform better. Moreover, there was also a disparity in the data granularity of both datasets used as Rand-Data uses 2-minute interval closing prices and S&P-Data uses 1-minute interval closing prices. As such, the comparisons made between them aren't as grounded as they should be. <br>
+<br>
+Despite all these limitations, I do believe that this research does provide valuable and somewhat counter-intuitive in-sights into stock prediction. It suggests that leverage data from multiple stocks over shorter, more recent time-frames can be more effective than looking at one stock over a really large time frame. This insight provides some insight into the blackbox that is this research field and may help guide some freshman college student who wants to attempt to delve into this field for themselves.
+<br>
+<br>
+Basically if anyone wants to work on this:
+* use better granularity
+* (maybe) use data from more stocks
+* use the spectograms at their full resolution
+<br>
