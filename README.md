@@ -263,8 +263,8 @@ Along with using Mean Absolute Error (MAE), I also used another performance metr
 
 
 * Rand-Data<br>
-      - MAE (Validation set): 5.1644<br>
-      - Correct Sign Percentage (Validation set): 52.81%<br>
+      - MAE (Validation set): 33.47<br>
+      - Correct Sign Percentage (Validation set): 51.68%<br>
 
 * S&P-Data<br>
       - MAE (Validation set): 0.79<br>
